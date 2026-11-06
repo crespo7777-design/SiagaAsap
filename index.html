@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SiagaAsap - Pantau Udara, Lindungi Kesehatan</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="app">
+    <header class="topbar">
+      <div class="brand">
+        <span class="brand-icon">☁️</span>
+        <span class="brand-name">Siaga<b>Asap</b></span>
+      </div>
+      <span class="tagline">Pantau Udara, Lindungi Kesehatan</span>
+    </header>
+
+    <main>
+      <!-- LAYAR 1: BERANDA -->
+      <section id="beranda" class="page active">
+        <div class="field">
+          <label for="wilayah">📍 Pilih wilayah</label>
+          <select id="wilayah"></select>
+        </div>
+
+        <div class="aqi-card" id="aqiCard">
+          <div class="aqi-label">ISPU / AQI</div>
+          <div class="aqi-row">
+            <div class="aqi-value" id="aqiValue">--</div>
+            <div class="aqi-status" id="aqiStatus">--</div>
+          </div>
+          <div class="aqi-update" id="aqiUpdate"></div>
+        </div>
+
+        <div class="demo-badge">⚠️ DATA CONTOH / DEMONSTRASI — bukan data real-time. Cek sumber resmi (mis. BMKG, KLHK/SiPongi, ISPU) untuk kondisi sebenarnya.</div>
+
+        <h2>Kualitas Udara</h2>
+        <div class="pm-row">
+          <div class="pm-box"><span>PM2.5</span><strong id="pm25">--</strong><small>µg/m³</small></div>
+          <div class="pm-box"><span>PM10</span><strong id="pm10">--</strong><small>µg/m³</small></div>
+        </div>
+
+        <h2>Saran Kesehatan</h2>
+        <div class="advice" id="advice"></div>
+
+        <h2>Apa yang bisa dilakukan?</h2>
+        <ul class="tips">
+          <li>Kurangi aktivitas luar ruangan saat udara buruk</li>
+          <li>Gunakan masker yang sesuai (N95/KN95/KF94)</li>
+          <li>Tutup jendela dan pintu bila asap masuk</li>
+        </ul>
+      </section>
+
+      <!-- LAYAR 2: EDUKASI -->
+      <section id="edukasi" class="page">
+        <h2>Edukasi Kesehatan</h2>
+        <p class="muted">Panduan saat kabut asap. Ketuk kartu untuk membaca selengkapnya.</p>
+        <div class="chips" id="chips"></div>
+        <div id="eduList"></div>
+
+        <h2>Langkah Singkat</h2>
+        <ol class="steps">
+          <li>Kurangi kegiatan luar ruangan.</li>
+          <li>Tutup pintu/jendela saat asap pekat.</li>
+          <li>Hindari membakar sampah.</li>
+          <li>Ikuti informasi resmi setempat.</li>
+          <li>Cari bantuan jika sesak berat.</li>
+        </ol>
+      </section>
+
+      <!-- LAYAR 3: GEJALA -->
+      <section id="gejala" class="page">
+        <h2>Catat Gejala</h2>
+        <p class="muted">Pilih keluhan yang kamu rasakan. Catatan pribadi, <b>bukan diagnosis</b>.</p>
+
+        <form id="gejalaForm" class="card">
+          <div class="field">
+            <label for="tanggal">Tanggal</label>
+            <input type="date" id="tanggal" required />
+          </div>
+
+          <fieldset>
+            <legend>Keluhan yang dirasakan</legend>
+            <label class="check"><input type="checkbox" name="gejala" value="Batuk" /> Batuk</label>
+            <label class="check"><input type="checkbox" name="gejala" value="Pilek" /> Pilek</label>
+            <label class="check"><input type="checkbox" name="gejala" value="Mata perih / berair" /> Mata perih / berair</label>
+            <label class="check"><input type="checkbox" name="gejala" value="Tenggorokan gatal / iritasi" /> Tenggorokan gatal / iritasi</label>
+            <label class="check"><input type="checkbox" name="gejala" value="Sesak napas" /> Sesak napas</label>
+            <label class="check"><input type="checkbox" name="gejala" value="Sakit kepala" /> Sakit kepala</label>
+            <label class="check"><input type="checkbox" name="gejala" value="Lainnya" /> Lainnya</label>
+          </fieldset>
+
+          <div class="field">
+            <label for="catatan">Catatan tambahan</label>
+            <textarea id="catatan" rows="3" placeholder="Tulis keluhan lain..."></textarea>
+          </div>
+
+          <div id="alertBerat" class="alert-danger" hidden>
+            🚨 Kamu memilih <b>sesak napas</b>. Bila sesak berat atau memburuk, segera cari bantuan medis atau hubungi layanan darurat (112).
+          </div>
+
+          <button type="submit" class="btn">Simpan catatan</button>
+          <p class="privacy">Data tersimpan hanya di perangkat ini (localStorage). Jangan isi nama lengkap, NIK, atau data sensitif.</p>
+        </form>
+
+        <div class="row-between">
+          <h2>Riwayat</h2>
+          <button class="btn-link" id="hapusSemua">Hapus semua</button>
+        </div>
+        <div id="riwayat"></div>
+      </section>
+
+      <!-- LAYAR 4: FASKES -->
+      <section id="faskes" class="page">
+        <h2>Fasilitas Kesehatan</h2>
+        <div class="field">
+          <label for="cariWilayah">Cari berdasarkan kota / kecamatan</label>
+          <input type="search" id="cariWilayah" placeholder="mis. Palembang" />
+        </div>
+        <div class="chips" id="jenisChips"></div>
+
+        <a class="btn btn-outline" id="mapsLink" href="#" target="_blank" rel="noopener">🗺️ Cari di Google Maps</a>
+
+        <div class="demo-badge">⚠️ Daftar di bawah adalah DATA CONTOH dan belum terverifikasi. Konfirmasi jam layanan sebelum datang.</div>
+        <div id="faskesList"></div>
+      </section>
+    </main>
+
+    <nav class="bottom-nav">
+      <button class="nav-btn active" data-page="beranda"><span>🏠</span>Beranda</button>
+      <button class="nav-btn" data-page="edukasi"><span>📖</span>Edukasi</button>
+      <button class="nav-btn" data-page="gejala"><span>📋</span>Gejala</button>
+      <button class="nav-btn" data-page="faskes"><span>📍</span>Faskes</button>
+    </nav>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
