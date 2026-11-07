@@ -17,6 +17,7 @@ navBtns.forEach(b => b.addEventListener("click", () => showPage(b.dataset.page))
 
 // ---------- BERANDA: KUALITAS UDARA (DATA CONTOH) ----------
 const dataUdara = {
+  "Medan, Sumatera Utara": { ispu: 96, pm25: 33, pm10: 62 },
   "Palembang, Sumatera Selatan": { ispu: 162, pm25: 89, pm10: 120 },
   "Pekanbaru, Riau": { ispu: 128, pm25: 62, pm10: 95 },
   "Jambi, Jambi": { ispu: 85, pm25: 35, pm10: 70 },
@@ -211,7 +212,30 @@ const faskes = [
   { nama: "Puskesmas Contoh C", jenis: "Puskesmas", wilayah: "Jambi", alamat: "(alamat contoh)" },
   { nama: "Klinik Contoh Jambi", jenis: "Klinik", wilayah: "Jambi", alamat: "(alamat contoh)" },
   { nama: "RS Contoh Pontianak", jenis: "RS", wilayah: "Pontianak", alamat: "(alamat contoh)" },
-  { nama: "Puskesmas Contoh D", jenis: "Puskesmas", wilayah: "Palangka Raya", alamat: "(alamat contoh)" }
+  { nama: "Puskesmas Contoh D", jenis: "Puskesmas", wilayah: "Palangka Raya", alamat: "(alamat contoh)" },
+
+  // ----- MEDAN -----
+  // nyata: true  = nama fasilitas nyata (ada tombol Maps).
+  // alamat terisi = alamat dicocokkan dengan sumber publik (Kemenkes/Hello Sehat/Halodoc).
+  // alamat kosong = alamat belum diverifikasi, gunakan tombol Maps untuk memastikan.
+  // Rumah sakit
+  { nama: "RSUP H. Adam Malik", jenis: "RS", wilayah: "Medan", kecamatan: "Medan Tuntungan", alamat: "Jl. Bunga Lau No. 17, Kemenangan Tani", nyata: true },
+  { nama: "RSUD dr. Pirngadi Kota Medan", jenis: "RS", wilayah: "Medan", kecamatan: "", alamat: "Jl. Prof. H.M. Yamin No. 47", nyata: true },
+  { nama: "Siloam Hospitals Medan (Dhirga Surya)", jenis: "RS", wilayah: "Medan", kecamatan: "Medan Petisah", alamat: "Jl. Imam Bonjol, Petisah Tengah", nyata: true },
+  { nama: "RS Columbia Asia Medan", jenis: "RS", wilayah: "Medan", kecamatan: "Medan Petisah", alamat: "Jl. Listrik, Petisah Tengah", nyata: true },
+  { nama: "RS Hermina Medan", jenis: "RS", wilayah: "Medan", kecamatan: "", alamat: "Jl. Asrama, Sei Sikambing C. II", nyata: true },
+  { nama: "RS Sarah", jenis: "RS", wilayah: "Medan", kecamatan: "Medan Petisah", alamat: "Jl. Baja Raya No. 10, Petisah Tengah", nyata: true },
+  { nama: "RS Murni Teguh Memorial Hospital", jenis: "RS", wilayah: "Medan", kecamatan: "", alamat: "", nyata: true },
+  { nama: "RSU Royal Prima", jenis: "RS", wilayah: "Medan", kecamatan: "", alamat: "", nyata: true },
+  { nama: "RSU Putri Hijau", jenis: "RS", wilayah: "Medan", kecamatan: "", alamat: "", nyata: true },
+  { nama: "RS Santa Elisabeth Medan", jenis: "RS", wilayah: "Medan", kecamatan: "", alamat: "", nyata: true },
+  // Puskesmas (alamat belum diverifikasi)
+  { nama: "Puskesmas Padang Bulan", jenis: "Puskesmas", wilayah: "Medan", kecamatan: "", alamat: "", nyata: true },
+  { nama: "Puskesmas Helvetia", jenis: "Puskesmas", wilayah: "Medan", kecamatan: "", alamat: "", nyata: true },
+  { nama: "Puskesmas Teladan", jenis: "Puskesmas", wilayah: "Medan", kecamatan: "", alamat: "", nyata: true },
+  { nama: "Puskesmas Medan Johor", jenis: "Puskesmas", wilayah: "Medan", kecamatan: "", alamat: "", nyata: true },
+  // Klinik / laboratorium
+  { nama: "Laboratorium Klinik Kimia Farma Medan Kartini", jenis: "Klinik", wilayah: "Medan", kecamatan: "", alamat: "", nyata: true }
 ];
 
 const jenisList = ["Semua", "Puskesmas", "RS", "Klinik"];
@@ -224,7 +248,11 @@ function renderFaskes() {
   const q = inputCari.value.trim().toLowerCase();
   const hasil = faskes.filter(f =>
     (filterJenis === "Semua" || f.jenis === filterJenis) &&
-    (q === "" || f.wilayah.toLowerCase().includes(q) || f.nama.toLowerCase().includes(q))
+    (q === "" ||
+      f.wilayah.toLowerCase().includes(q) ||
+      f.nama.toLowerCase().includes(q) ||
+      (f.kecamatan || "").toLowerCase().includes(q) ||
+      (f.alamat || "").toLowerCase().includes(q))
   );
 
   // Tautan Google Maps (sumber real untuk pencarian lokasi)
@@ -241,7 +269,20 @@ function renderFaskes() {
   hasil.forEach(f => {
     const d = document.createElement("div");
     d.className = "fk-card";
-    d.innerHTML = `<span class="fk-type">${f.jenis}</span><strong>${f.nama}</strong><small>${f.wilayah} • ${f.alamat}</small><small>Konfirmasi jam layanan sebelum datang.</small>`;
+    let lokasi = f.wilayah;
+    if (f.kecamatan) lokasi += " • " + f.kecamatan;
+    if (f.alamat) lokasi += " • " + f.alamat;
+
+    let status = "Data contoh, belum terverifikasi";
+    if (f.nyata) status = f.alamat ? "✔ Alamat dari sumber publik" : "⚠ Alamat belum terverifikasi, cek lewat Maps";
+
+    let linkMaps = "";
+    if (f.nyata) {
+      const url = "https://www.google.com/maps/search/" + encodeURIComponent(f.nama + " " + f.wilayah);
+      linkMaps = `<a class="fk-link" href="${url}" target="_blank" rel="noopener">📍 Buka di Maps</a>`;
+    }
+
+    d.innerHTML = `<span class="fk-type">${f.jenis}</span><strong>${f.nama}</strong><small>${lokasi}</small><small class="fk-status">${status}</small><small>Konfirmasi jam layanan sebelum datang.</small>${linkMaps}`;
     box.appendChild(d);
   });
 }

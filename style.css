@@ -186,6 +186,10 @@ legend { margin-bottom: 6px; }
 .fk-card small { color: var(--muted); display: block; }
 .fk-type { display: inline-block; font-size: .72rem; background: var(--green-soft); color: var(--green-dark); padding: 2px 8px; border-radius: 10px; margin-bottom: 4px; }
 
+.fk-status { color: var(--green-dark) !important; font-weight: 600; }
+.fk-link { display: inline-block; margin-top: 6px; font-size: .85rem; color: var(--green); font-weight: 600; text-decoration: none; }
+.fk-link:hover { text-decoration: underline; }
+
 /* Bottom nav */
 .bottom-nav {
   position: fixed; bottom: 0; left: 50%; transform: translateX(-50%);
